@@ -1,0 +1,6 @@
+sample: 4
+max_rounds: 20
+validation_rounds: 3
+earlystop: True
+optimize_meta_model_name: "claude-3-5-sonnet-20241022"
+optimize_execute_model_name: "gpt-4o-mini-2024-07-18"
