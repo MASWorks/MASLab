@@ -12,6 +12,7 @@ from .mad import MAD_Main
 from .mapcoder import MapCoder_HumanEval, MapCoder_MBPP
 from .self_consistency import SelfConsistency
 from .mav import MAV_GPQA, MAV_HumanEval, MAV_Main, MAV_MATH, MAV_MMLU
+from .aflow import AFlow_MATH
 
 method2class = {
     "vanilla": MAS,
@@ -38,7 +39,8 @@ method2class = {
     "mav_humaneval": MAV_HumanEval,
     "mav_main": MAV_Main,
     "mav_math": MAV_MATH,
-    "mav_mmlu": MAV_MMLU
+    "mav_mmlu": MAV_MMLU,
+    "aflow_math": AFlow_MATH
 }
 
 def get_method_class(method_name, dataset_name=None):
