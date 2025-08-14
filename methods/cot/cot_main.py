@@ -1,8 +1,8 @@
 from methods.mas_base import MAS
 
 class CoT(MAS):
-    def __init__(self, general_config):
-        super().__init__(general_config)
+    def __init__(self, general_config, method_config_name=None):
+        super().__init__(general_config, method_config_name=method_config_name)
     
     def inference(self, sample):
         
