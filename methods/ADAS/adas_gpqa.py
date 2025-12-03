@@ -25,8 +25,8 @@ SYSTEM_MSG = ""
 PRINT_LLM_DEBUG = False
 SEARCHING_MODE = True
 execute_model = None
-api_key = "http://47.88.65.188:8405/v1"
-base_url = "sk-Hu8QQ1yseCFCMxc209Ab0cF8Fe3e49C4A52b2544F176B1Df" 
+api_key = "Please_set_your_own_key"
+base_url = "Please_set_your_own_base_url" 
 optimize_execute_token_stats = {}
 inference_execute_token_stats = {}
 
@@ -378,8 +378,11 @@ class ADAS_GPQA(MAS):
 
         with open(self.inference_path, 'w') as json_file:
             json.dump(best_solution, json_file, indent=4)
-    
-    def inference(self, query):
+            
+    def inference(self, sample):
+        query = sample.get("query")
+        if not query:
+            raise ValueError("Sample must contain a 'query' key.")
         global execute_model, api_key, base_url, SEARCHING_MODE
         SEARCHING_MODE = False
         execute_model = self.inference_model

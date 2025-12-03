@@ -20,7 +20,7 @@ from ..utils import load_config
 class GPTswarm_MMLU(MAS):
     def __init__(self, general_config, method_config_name="config"):
         super().__init__(general_config)
-        
+        method_config_name = "config" if method_config_name is None else method_config_name
         self.method_config = load_config(os.path.join(os.path.dirname(os.path.abspath(__file__)), "configs", f"{method_config_name}.yaml"))
         self.num_truthful_agents = self.method_config["num-truthful-agent"]
         self.num_iterations = self.method_config["num_iterations"]
@@ -143,7 +143,10 @@ class GPTswarm_MMLU(MAS):
                     in_node.add_predecessor(out_node)
         return _graph
     
-    def inference(self, query):
+    def inference(self, sample):
+        query = sample.get("query")
+        if not query:
+            raise ValueError("Sample must contain a 'query' key.")
         self.inference_flag = True
         optimized_path = Path(self.results_path) / "best_workflow.npy"
         if optimized_path.exists():

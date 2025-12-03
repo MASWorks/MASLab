@@ -29,7 +29,7 @@ inference_execute_token_stats = {}
 PRINT_LLM_DEBUG = False
 SEARCHING_MODE = True
 
-client = openai.OpenAI(api_key='sk-lDzVviBBxEvzIk9Ay4oFPLwLEAqtSZqxxdgaEWAX0Nl9FXxm', base_url='http://123.129.219.111:3000/v1')
+client = openai.OpenAI(api_key='Your api key', base_url='Your base url')
 
 def get_json_response_from_gpt(msg,model,system_message,temperature=0):
     response = client.chat.completions.create(
@@ -342,7 +342,10 @@ class ADAS_MATH(MAS):
         with open(token_path,"a") as f:
             json.dump(optimize_execute_token_stats, f, indent=4)
     
-    def inference(self, query):
+    def inference(self, sample):
+        query = sample.get("query")
+        if not query:
+            raise ValueError("Sample must contain a 'query' key.")
         global execute_model, api_key, base_url, SEARCHING_MODE
         SEARCHING_MODE = False
         execute_model = self.inference_model

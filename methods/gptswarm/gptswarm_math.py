@@ -23,7 +23,7 @@ inference_execute_token_stats = {}
 class GPTswarm_MATH(MAS):
     def __init__(self, general_config, method_config_name="config"):
         super().__init__(general_config)
-        
+        method_config_name = "config" if method_config_name is None else method_config_name
         self.method_config = load_config(os.path.join(os.path.dirname(os.path.abspath(__file__)), "configs", f"{method_config_name}.yaml"))
         self.num_truthful_agents = self.method_config["num-truthful-agent"]
         self.num_iterations = self.method_config["num_iterations"]
@@ -147,7 +147,10 @@ class GPTswarm_MATH(MAS):
                     in_node.add_predecessor(out_node)
         return _graph
     
-    def inference(self, query):
+    def inference(self, sample):
+        query = sample.get("query")
+        if not query:
+            raise ValueError("Sample must contain a 'query' key.")
         self.inference_flag = True
         optimized_path = Path(self.results_path) / "best_workflow.npy"
         if optimized_path.exists():
@@ -155,11 +158,11 @@ class GPTswarm_MATH(MAS):
             self.edge_logits = torch.from_numpy(loaded_probs_npy)
             edge_mask = self.edge_logits > 0.5
             graph = self._generate_graph(edge_mask)
+            input_dict = {"task": query}
+            response = graph._inference(input_dict)
             self.token_stats[self.model_name]["num_llm_calls"] = graph.token_stats[self.model_name]["num_llm_calls"]
             self.token_stats[self.model_name]["prompt_tokens"] = graph.token_stats[self.model_name]["prompt_tokens"]
             self.token_stats[self.model_name]["completion_tokens"] = graph.token_stats[self.model_name]["completion_tokens"]
-            input_dict = {"task": query}
-            response = graph._inference(input_dict)
             response = "\n".join(response)
         else:
             raise NotImplementedError("Best_workflow path does not exist!")
@@ -207,7 +210,9 @@ class GPTswarm_MATH(MAS):
                 raw_answers.append(answer)
                 log_probs.append(log_prob)
                 
-                correct_answer = record['solution']
+                correct_answer = record.get('solution', record.get('gt'))
+                if correct_answer is None:
+                    raise KeyError("Expected 'solution' or 'gt' in record for grading.")
                 
                 assert isinstance(correct_answer, str), (
                     f"String expected but got {correct_answer} "

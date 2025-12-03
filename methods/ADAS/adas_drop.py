@@ -44,10 +44,6 @@ class AgentSystem():
         pass
 
 class LLMAgentBase():
-    """
-    Attributes:
-    """
-
     def __init__(self, output_fields: list, agent_name: str,
                  role='helpful assistant', temperature=0.5) -> None:
         self.output_fields = output_fields
@@ -60,6 +56,7 @@ class LLMAgentBase():
         # give each instance a unique id
         self.id = random_id()
         self.client = openai.OpenAI(api_key=api_key, base_url=base_url)
+
     def get_json_response_from_gpt(
             self,
             msg,
@@ -353,7 +350,10 @@ class ADAS_DROP(MAS):
         with open(self.inference_path, 'w') as json_file:
             json.dump(best_solution, json_file, indent=4)
     
-    def inference(self, query):
+    def inference(self, sample):
+        query = sample.get("query")
+        if not query:
+            raise ValueError("Sample must contain a 'query' key.")
         global execute_model, api_key, base_url, SEARCHING_MODE
         SEARCHING_MODE = False
         execute_model = self.inference_model

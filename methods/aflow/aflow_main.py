@@ -32,7 +32,7 @@ BENCHMARK={
 class AFlow(MAS):
     def __init__(self, general_config, method_config_name="config"):
         super().__init__(general_config)
-        
+        method_config_name = "config" if method_config_name is None else method_config_name
         self.method_config = load_config(
             Path(__file__).parent / "configs" / f"{method_config_name}.yaml"
         )
@@ -78,10 +78,10 @@ class AFlow(MAS):
         self.inference_flag = True
 
     
-    def inference(self, query,entrypoint=""):
-        """
-        query: Query to be passed to the MAS
-        """
+    def inference(self, sample, entrypoint = ""):
+        query = sample.get("query")
+        if not query:
+            raise ValueError("Sample must contain a 'query' key.")
         self.inference_flag = True
         optimized_path = Path(self.results_path) / "best_workflow"
         if optimized_path.exists():

@@ -24,6 +24,7 @@ warnings.filterwarnings("ignore", category=SyntaxWarning, message="invalid escap
 class AFlow_MATH(MAS):
     def __init__(self, general_config, method_config_name="config"):
         super().__init__(general_config)
+        method_config_name = "config" if method_config_name is None else method_config_name
         self.method_config = load_config(
             Path(__file__).parent / "configs" / f"{method_config_name}.yaml"
         )
@@ -64,10 +65,10 @@ class AFlow_MATH(MAS):
         self.inference_flag = True
 
     
-    async def inference(self, query):
-        """
-        query: Query to be passed to the MAS
-        """
+    async def inference(self, sample: Dict[str, Any]) -> Dict[str, Any]:
+        query = sample.get("query")
+        if not query:
+            raise ValueError("Sample must contain a 'query' key.")
         self.inference_flag = True
         optimized_path = Path(self.results_path) / "best_workflow"
         if optimized_path.exists():
@@ -376,8 +377,7 @@ class AFlow_MATH(MAS):
     
     def select_round(self, items,alpha=0.2, lambda_=0.3):
         
-        if not items:
-            raise ValueError("Item list is empty.")
+        if not items: raise ValueError("Item list is empty.")
 
         sorted_items = sorted(items, key=lambda x: x["score"], reverse=True)
         scores = [item["score"] * 100 for item in sorted_items]
