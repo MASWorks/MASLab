@@ -1,0 +1,10 @@
+valid_size: 128
+test_size: 800
+shuffle_seed: 0
+n_repreat: 1
+multiprocessing: true
+max_workers: 48
+debug: true
+expr_name: "mmlu_gpt3.5_results"
+n_generation: 10
+debug_max: 3

@@ -1,0 +1,4 @@
+num-truthful-agent: 6
+num_iterations: 100
+#200
+lr: 0.1
